@@ -31,21 +31,19 @@ $(document).ready(function() {
             for (k=0; k<6;k++){
                 behindBlueDrop(k,yCoordAndTimer);
             }
-        },135*(yCoordAndTimer));
+        },.3*(yCoordAndTimer));
     }
     function behindBlueDrop (checkAllSix,movingY){
-        if (Math.abs((36+checkAllSix*71)-movingY)<58){
-            partial(107,movingY,107,36+checkAllSix*71,29);
-            //   partial(107,85,107,107,29);
-            //  $('p').text(Math.abs((36+checkAllSix*71)-movingY));
+        if (Math.abs((36+checkAllSix*71)-movingY)<59){
+            partial(107,movingY,36+checkAllSix*71,29);
         }
     }
-    function partial (x1,y1,x2,y2,r){
+    function partial (x,y1,y2,r){
 
         var yp = (y2+y1)/2;
-        var xp = x1+(Math.sqrt((r*r)-((y2-y1)/2)^2));
+        var xp = x+(Math.sqrt((r*r)-((y2-y1)/2)*((y2-y1)/2)));
         var direction;
-        var startingAngle1 = Math.atan((yp-y1)/(xp-x1));
+        var startingAngle1 = Math.atan((yp-y1)/(xp-x));
         $('#one').text('yp is: '+yp);
         $('#two').text('y1 is: '+y1);
         $('#three').text('xp is: '+xp);
@@ -59,8 +57,8 @@ $(document).ready(function() {
             direction = true;
         }
         ctx.beginPath();
-        ctx.arc(x1, y1, r, startingAngle1, endingAngle1,direction);
-        ctx.arc(x2,y2,r,startingAngle2, endingAngle2, direction);
+        ctx.arc(x, y1, r, startingAngle1, endingAngle1,direction);
+        ctx.arc(x,y2,r,startingAngle2, endingAngle2, direction);
         ctx.fillStyle = "#0f0";
         ctx.fill();
         ctx.stroke();
@@ -69,5 +67,4 @@ $(document).ready(function() {
         slowdrop(i);
     }
 
-   // partial(107,79,107,107,29);
 })

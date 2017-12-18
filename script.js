@@ -23,15 +23,26 @@ $(document).ready(function() {
             }
         }
     }
-
+    function clearTop(){
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, 71);
+        ctx.lineTo(500, 71);
+        ctx.lineTo(500, 0);
+        ctx.lineTo(0, 0);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
+        ctx.stroke();
+    }
    function slowdrop(yCoordAndTimer){
         setTimeout(function(){
             blueCanvas();
             slots();
+            clearTop();
             for (k=0; k<6;k++){
                 behindBlueDrop(k,yCoordAndTimer);
             }
-        },.3*(yCoordAndTimer));
+        },103*(yCoordAndTimer));
     }
     function behindBlueDrop (checkAllSix,movingY){
         if (Math.abs((36+checkAllSix*71)-movingY)<59){
@@ -43,6 +54,9 @@ $(document).ready(function() {
         var yp = (y2+y1)/2;
         var xp = x+(Math.sqrt((r*r)-((y2-y1)/2)*((y2-y1)/2)));
         var direction;
+        if (xp==x){
+            return;
+        }
         var startingAngle1 = Math.atan((yp-y1)/(xp-x));
         $('#one').text('yp is: '+yp);
         $('#two').text('y1 is: '+y1);
@@ -65,6 +79,7 @@ $(document).ready(function() {
     }
     for (i=0;i<391;i++){
         slowdrop(i);
+
     }
 
 })

@@ -3,11 +3,11 @@ $(document).ready(function() {
     var ctx = c.getContext("2d");
     function blueCanvas () {
     ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0, 429);
-    ctx.lineTo(500, 429);
-    ctx.lineTo(500, 0);
-    ctx.lineTo(0, 0);
+    ctx.moveTo(0, 71);
+    ctx.lineTo(0, 500);
+    ctx.lineTo(500, 500);
+    ctx.lineTo(500, 71);
+    ctx.lineTo(0, 71);
     ctx.fillStyle = "#00004d";
     ctx.fill();
 }
@@ -16,8 +16,8 @@ $(document).ready(function() {
         for (var i = 0; i < 7; i++) {
             for (var j = 0; j < 6; j++) {
                 ctx.beginPath();
-                ctx.arc(36 + i * 71, 36 + j * 71, 29, 0, 2 * Math.PI);
-                ctx.fillStyle = "#ccc";
+                ctx.arc(36 + i * 71, 107 + j * 71, 29, 0, 2 * Math.PI);
+                ctx.fillStyle = "#fff";
                 ctx.fill();
                 ctx.stroke();
             }
@@ -35,7 +35,7 @@ $(document).ready(function() {
     }
     function behindBlueDrop (checkAllSix,movingY){
         if (Math.abs((36+checkAllSix*71)-movingY)<59){
-            partial(107,movingY,36+checkAllSix*71,29);
+            partial(107,71+movingY,107+checkAllSix*71,29);
         }
     }
     function partial (x,y1,y2,r){

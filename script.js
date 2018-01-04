@@ -2,16 +2,15 @@ $(document).ready(function() {
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
     function blueCanvas () {
-    ctx.beginPath();
-    ctx.moveTo(0, 71);
-    ctx.lineTo(0, 500);
-    ctx.lineTo(500, 500);
-    ctx.lineTo(500, 71);
-    ctx.lineTo(0, 71);
-    ctx.fillStyle = "#00004d";
-    ctx.fill();
-}
-   // ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, 71);
+        ctx.lineTo(0, 500);
+        ctx.lineTo(500, 500);
+        ctx.lineTo(500, 71);
+        ctx.lineTo(0, 71);
+        ctx.fillStyle = "#00004d";
+        ctx.fill();
+    }
     function slots () {
         for (var i = 0; i < 7; i++) {
             for (var j = 0; j < 6; j++) {
@@ -32,6 +31,7 @@ $(document).ready(function() {
         ctx.lineTo(500, 71);
         ctx.lineTo(500, 0);
         ctx.lineTo(0, 0);
+        ctx.strokeStyle="#fff";
         ctx.fillStyle = "#fff";
         ctx.fill();
         ctx.stroke();
@@ -57,19 +57,18 @@ $(document).ready(function() {
         ctx.stroke();
         ctx.closePath();
     }
-   function slowdrop(yCoordAndTimer){
+    function slowdrop(yCoordAndTimer){
         setTimeout(function(){
             blueCanvas();
             slots();
             clearTop();
             if (yCoordAndTimer<100){
                 top(107,yCoordAndTimer,29);
-
             }
             for (k=0; k<7;k++){
                 behindBlueDrop(k,yCoordAndTimer);
             }
-        },.5*(yCoordAndTimer));
+        },10*(yCoordAndTimer-30));
     }
     function behindBlueDrop (checkAllSix,movingY){
         if (Math.abs((36+checkAllSix*71)-movingY)<59){
@@ -77,7 +76,6 @@ $(document).ready(function() {
         }
     }
     function partial (x,y1,y2,r){
-
         var yp = (y2+y1)/2;
         var xp = x+(Math.sqrt((r*r)-((y2-y1)/2)*((y2-y1)/2)));
         var direction;
@@ -106,9 +104,43 @@ $(document).ready(function() {
         ctx.stroke();
         ctx.closePath();
     }
-    for (i=0;i<462;i++){
-        slowdrop(i);
-
+    function chipBeforeFall(x,color){
+        ctx.beginPath();
+        ctx.arc(x, 30, 29, 0, 2 * Math.PI);
+        if (color){
+            ctx.strokeStyle ="#f00";
+            ctx.fillStyle = "#f00";
+        }else{
+            ctx.strokeStyle ="#0f0";
+            ctx.fillStyle = "#0f0";
+        }
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
     }
 
+    chipBeforeFall(320,1);
+    moveChipSideToSide();
+    function moveChipSideToSide (){
+        document.addEventListener("mousedown", function(){
+            var x = event.pageX;
+            var y = event.pageY;
+            if (x >291 && x <349 && y>0 && y<59){
+                document.addEventListener("mousemove", function(){
+                    var x = event.pageX;
+                    if (x>29 && x <470){
+                        clearTop();
+                        chipBeforeFall(x,1);
+                    }
+                }); 
+            }
+        });
+    }
+    
+    /*
+    for (i=30;i<462;i++){
+        slowdrop(i);
+    }
+    */
+    
 })

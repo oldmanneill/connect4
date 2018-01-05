@@ -27,8 +27,8 @@ $(document).ready(function() {
     function clearTop(){
         ctx.beginPath();
         ctx.moveTo(0, 0);
-        ctx.lineTo(0, 71);
-        ctx.lineTo(500, 71);
+        ctx.lineTo(0, 70);
+        ctx.lineTo(500, 70);
         ctx.lineTo(500, 0);
         ctx.lineTo(0, 0);
         ctx.strokeStyle="#fff";
@@ -118,25 +118,32 @@ $(document).ready(function() {
         ctx.stroke();
         ctx.closePath();
     }
-
-    chipBeforeFall(320,1);
-    moveChipSideToSide();
     function moveChipSideToSide (){
-        document.addEventListener("mousedown", function(){
+        var flag = 0;
+        document.addEventListener("mousedown", function startMovingChip(){
             var x = event.pageX;
             var y = event.pageY;
-            if (x >291 && x <349 && y>0 && y<59){
-                document.addEventListener("mousemove", function(){
+            if (x >291 && x <349 && y>0 && y<59 && flag == 0){//chip starts in the middle. if it is clicked, movement is triggered
+                document.addEventListener("mousemove", function moveChipSideways(){
                     var x = event.pageX;
-                    if (x>29 && x <470){
+                    if (x>29 && x <470 && flag == 0){
                         clearTop();
                         chipBeforeFall(x,1);
                     }
                 }); 
+                document.addEventListener("mouseup", function mouseUp(){
+                    flag = 1;
+                  //  document.removeEventListener("mousedown", startMovingChip);
+                });
             }
         });
     }
-    
+    blueCanvas();
+    slots();
+    chipBeforeFall(320,1);
+    if (moveChipSideToSide()==1){
+        alert("hello");
+    }
     /*
     for (i=30;i<462;i++){
         slowdrop(i);

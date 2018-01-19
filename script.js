@@ -6,7 +6,7 @@ $(document).ready(function () {
     var ctx = c.getContext("2d");
     blueCanvas(0, 500, 71, 500);
     slots(0, 7, 6); //creates the white slots, 7 across, 6 down
-    chipBeforeFall(320, 1);
+    chipBeforeFall(320);
     moveChipSideToSide()
 
     function blueCanvas(x1, x2, y1, y2) {
@@ -61,8 +61,13 @@ $(document).ready(function () {
         }
         ctx.beginPath();
         ctx.arc(x, y, r, startingAngle, endingAngle, true);
-        ctx.strokeStyle = "#0f0";
-        ctx.fillStyle = "#0f0";
+        if (color - 1) {
+            ctx.strokeStyle = "#f00";
+            ctx.fillStyle = "#f00";
+        } else {
+            ctx.strokeStyle = "#0f0";
+            ctx.fillStyle = "#0f0";
+        }
         ctx.fill();
         ctx.stroke();
         ctx.closePath();
@@ -70,13 +75,11 @@ $(document).ready(function () {
 
     function slowdrop(yCoordAndTimer, x) {
         setTimeout(function () {
-            //     blueCanvas();
             var colStart = (x - 36) / 71;
             var colStop = colStart + 1;
             var roStop = 6;
-
-            slots(colStart, colStop, roStop);
-            if (yCoordAndTimer < 103) {
+            slots(colStart, colStop, roStop); //clears slots while dropping
+            if (yCoordAndTimer < 103) { //clears top while dropping
                 var clrTopStart = x - 36;
                 var clrTopStop = x + 36;
                 clearTop(clrTopStart, clrTopStop);
@@ -120,8 +123,13 @@ $(document).ready(function () {
         ctx.beginPath();
         ctx.arc(x, y1, r, startingAngle1, endingAngle1, direction);
         ctx.arc(x, y2, r, startingAngle2, endingAngle2, direction);
-        ctx.strokeStyle = "#0f0";
-        ctx.fillStyle = "#0f0";
+        if (color - 1) {
+            ctx.strokeStyle = "#f00";
+            ctx.fillStyle = "#f00";
+        } else {
+            ctx.strokeStyle = "#0f0";
+            ctx.fillStyle = "#0f0";
+        }
         ctx.fill();
         ctx.stroke();
         ctx.closePath();
@@ -142,6 +150,31 @@ $(document).ready(function () {
         ctx.closePath();
     }
 
+    function dropListener(callback) {
+        document.addEventListener("mouseup", function mouseUp() {
+            var x = event.pageX;
+            flag = 1;
+            var track = Math.round((x - 36) / 71); //track = which column to drop the chip into
+            if (track < 0) {
+                track = 0;
+            }
+            track = 36 + (track * 71);
+            for (var i = 30; i < 462; i++) {
+                if (flag == 1) {
+                    slowdrop(i, track);
+                }
+            }
+        });
+        callback();
+    }
+
+    function doItAllAgain() {
+        flag = 0;
+        color *= -1;
+        chipBeforeFall(320);
+        moveChipSideToSide();
+    }
+
     function moveChipSideToSide() {
         var flag = 0;
         document.addEventListener("mousedown", function startMovingChip() {
@@ -151,33 +184,12 @@ $(document).ready(function () {
                 document.addEventListener("mousemove", function moveChipSideways() {
                     var x = event.pageX;
                     if (x > 29 && x < 470 && flag == 0) {
-                        clearTop(0,500);
-                        chipBeforeFall(x, 1);
+                        clearTop(0, 500);
+                        chipBeforeFall(x);
                     }
                 });
-                document.addEventListener("mouseup", function mouseUp() {
-                    var x = event.pageX;
-                    flag = 1;
-                    var track = Math.round((x - 36) / 71); //track = which column to drop the chip into
-                    if (track < 0) {
-                        track = 0;
-                    }
-                    track = 36 + (track * 71);
-                    color *= -1;
-                    for (var i = 30; i < 462; i++) {
-                        if (flag == 1) {
-                            slowdrop(i, track);
-                        }
-                    }
-                });
+dropListener(doItAllAgain);
             }
         });
     }
-
-    /*
-    for (i=30;i<462;i++){
-        slowdrop(i);
-    }
-    */
-
 })

@@ -4,23 +4,23 @@ $(document).ready(function () {
     var engineArr = [];
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
-    blueCanvas(0,500,71,500);
-    slots(0,7,6);//creates the white slots, 7 across, 6 down
+    blueCanvas(0, 500, 71, 500);
+    slots(0, 7, 6); //creates the white slots, 7 across, 6 down
     chipBeforeFall(320, 1);
     moveChipSideToSide()
 
-    function blueCanvas(x1,x2,y1,y2) {
+    function blueCanvas(x1, x2, y1, y2) {
         ctx.beginPath();
-        ctx.moveTo(x1,y1);
-        ctx.lineTo(x1,y2);
-        ctx.lineTo(x2,y2);
-        ctx.lineTo(x2,y1);
-        ctx.lineTo(x1,y1);
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x1, y2);
+        ctx.lineTo(x2, y2);
+        ctx.lineTo(x2, y1);
+        ctx.lineTo(x1, y1);
         ctx.fillStyle = "#00004d";
         ctx.fill();
     }
 
-    function slots(columnStart,columnStop,rowStop) {
+    function slots(columnStart, columnStop, rowStop) {
         for (var i = columnStart; i < columnStop; i++) {
             for (var j = 0; j < rowStop; j++) {
                 ctx.beginPath();
@@ -34,13 +34,13 @@ $(document).ready(function () {
         }
     }
 
-    function clearTop() {
+    function clearTop(topStart, topStop) {
         ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(0, 70);
-        ctx.lineTo(500, 70);
-        ctx.lineTo(500, 0);
-        ctx.lineTo(0, 0);
+        ctx.moveTo(topStart, 0);
+        ctx.lineTo(topStart, 70);
+        ctx.lineTo(topStop, 70);
+        ctx.lineTo(topStop, 0);
+        ctx.lineTo(topStart, 0);
         ctx.strokeStyle = "#fff";
         ctx.fillStyle = "#fff";
         ctx.fill();
@@ -70,12 +70,18 @@ $(document).ready(function () {
 
     function slowdrop(yCoordAndTimer, x) {
         setTimeout(function () {
-       //     blueCanvas();
-            var colStart = (x-36)/71;//
+            //     blueCanvas();
+            var colStart = (x - 36) / 71;
             var colStop = colStart + 1;
             var roStop = 6;
-            slots(colStart,colStop,roStop);
-            clearTop();
+
+            slots(colStart, colStop, roStop);
+            if (yCoordAndTimer < 103) {
+                var clrTopStart = x - 36;
+                var clrTopStop = x + 36;
+                clearTop(clrTopStart, clrTopStop);
+            }
+
             if (yCoordAndTimer < 100) {
                 top(x, yCoordAndTimer, 29);
             }
@@ -124,7 +130,7 @@ $(document).ready(function () {
     function chipBeforeFall(x) {
         ctx.beginPath();
         ctx.arc(x, 30, 29, 0, 2 * Math.PI);
-        if (color-1) {
+        if (color - 1) {
             ctx.strokeStyle = "#f00";
             ctx.fillStyle = "#f00";
         } else {
@@ -145,7 +151,7 @@ $(document).ready(function () {
                 document.addEventListener("mousemove", function moveChipSideways() {
                     var x = event.pageX;
                     if (x > 29 && x < 470 && flag == 0) {
-                        clearTop();
+                        clearTop(0,500);
                         chipBeforeFall(x, 1);
                     }
                 });

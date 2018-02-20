@@ -92,14 +92,15 @@ $(document).ready(function () {
             for (k = 0; k < 7; k++) {
                 behindBlueDrop(x, k, yCoordAndTimer, doItAllAgain);
             }
-        }, 10 * (yCoordAndTimer - 30));
+        }, 2.5 * (yCoordAndTimer - 30));
     }
 
     function behindBlueDrop(x, checkAllSix, movingY) {
         if (Math.abs((36 + checkAllSix * 71) - movingY) < 59) {
             partial(x, movingY, 36 + checkAllSix * 71, 29);
         }
-        if (movingY ==400){
+        if (movingY == 461) { //this is temporary...if movingY has reached the bottom, change to variable that tracks final location.
+            
             doItAllAgain();
         }
     }
@@ -112,7 +113,6 @@ $(document).ready(function () {
             return;
         }
         var startingAngle1 = Math.atan((yp - y1) / (xp - x));
-        $('#one').text('yp is: ' + yp);
         $('#two').text('y1 is: ' + y1);
         $('#three').text('xp is: ' + xp);
         $('#four').text('startingAngle1 is: ' + startingAngle1);
@@ -196,7 +196,7 @@ $(document).ready(function () {
     }
 
     function moveChipSideToSide() {
-        //flag = 0;
+        flag = 0;
         c.addEventListener("mousedown", startMovingChip);
         c.addEventListener("mouseup", mouseUp);
     }

@@ -90,17 +90,17 @@ $(document).ready(function () {
                 top(x, yCoordAndTimer, 29);
             }
             for (k = 0; k < 7; k++) {
-                behindBlueDrop(x, k, yCoordAndTimer);
+                behindBlueDrop(x, k, yCoordAndTimer, doItAllAgain);
             }
         }, 10 * (yCoordAndTimer - 30));
-        if (yCoordAndTimer == 400) {
-            doItAllAgain();
-        }
     }
 
     function behindBlueDrop(x, checkAllSix, movingY) {
         if (Math.abs((36 + checkAllSix * 71) - movingY) < 59) {
             partial(x, movingY, 36 + checkAllSix * 71, 29);
+        }
+        if (movingY ==400){
+            doItAllAgain();
         }
     }
 
@@ -181,6 +181,7 @@ $(document).ready(function () {
     function mouseUp() {
         c.removeEventListener("mousemove", moveChipSideways);
         c.removeEventListener("mousedown", startMovingChip);
+        c.removeEventListener("mouseup", mouseUp);
 
         var x = event.pageX;
         flag = 1;
@@ -200,3 +201,5 @@ $(document).ready(function () {
         c.addEventListener("mouseup", mouseUp);
     }
 })
+
+//changed document to "c"

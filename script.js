@@ -2,6 +2,7 @@ $(document).ready(function () {
     var board = [(0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0)];
     var color = -1;
     var engineArr = [];
+    var flag = 0;
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
     blueCanvas(0, 500, 71, 500);
@@ -92,6 +93,9 @@ $(document).ready(function () {
                 behindBlueDrop(x, k, yCoordAndTimer);
             }
         }, 10 * (yCoordAndTimer - 30));
+        if (yCoordAndTimer == 400) {
+            doItAllAgain();
+        }
     }
 
     function behindBlueDrop(x, checkAllSix, movingY) {
@@ -150,23 +154,6 @@ $(document).ready(function () {
         ctx.closePath();
     }
 
-    function dropListener(callback) {
-        document.addEventListener("mouseup", function mouseUp() {
-            var x = event.pageX;
-            flag = 1;
-            var track = Math.round((x - 36) / 71); //track = which column to drop the chip into
-            if (track < 0) {
-                track = 0;
-            }
-            track = 36 + (track * 71);
-            for (var i = 30; i < 462; i++) {
-                if (flag == 1) {
-                    slowdrop(i, track);
-                }
-            }
-        });
-        callback();
-    }
 
     function doItAllAgain() {
         flag = 0;
@@ -175,21 +162,41 @@ $(document).ready(function () {
         moveChipSideToSide();
     }
 
+    function moveChipSideways() {
+        var x = event.pageX;
+        if (x > 29 && x < 470 && flag == 0) {
+            clearTop(0, 500);
+            chipBeforeFall(x);
+        }
+    }
+
+    function startMovingChip() {
+        var x = event.pageX;
+        var y = event.pageY;
+        if (x > 291 && x < 349 && y > 0 && y < 59 && flag == 0) { //chip starts in the middle. if it is clicked, movement is triggered
+            c.addEventListener("mousemove", moveChipSideways);
+        }
+    }
+
+    function mouseUp() {
+        c.removeEventListener("mousemove", moveChipSideways);
+        c.removeEventListener("mousedown", startMovingChip);
+
+        var x = event.pageX;
+        flag = 1;
+        var track = Math.round((x - 36) / 71); //track = which column to drop the chip into
+        if (track < 0) {
+            track = 0;
+        }
+        track = 36 + (track * 71);
+        for (var i = 30; i < 462; i++) {
+            slowdrop(i, track);
+        }
+    }
+
     function moveChipSideToSide() {
-        var flag = 0;
-        document.addEventListener("mousedown", function startMovingChip() {
-            var x = event.pageX;
-            var y = event.pageY;
-            if (x > 291 && x < 349 && y > 0 && y < 59 && flag == 0) { //chip starts in the middle. if it is clicked, movement is triggered
-                document.addEventListener("mousemove", function moveChipSideways() {
-                    var x = event.pageX;
-                    if (x > 29 && x < 470 && flag == 0) {
-                        clearTop(0, 500);
-                        chipBeforeFall(x);
-                    }
-                });
-dropListener(doItAllAgain);
-            }
-        });
+        //flag = 0;
+        c.addEventListener("mousedown", startMovingChip);
+        c.addEventListener("mouseup", mouseUp);
     }
 })

@@ -8,14 +8,13 @@ $(document).ready(function () {
         [0, 0, 0, 0, 0, 0, 0]
     ];
     var color = -1;
-    var flag = 0;
+    var flag;
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
     var dropTo = 6;
     blueCanvas(0, 500, 71, 500);
     slots(0, 7, 6); //creates the white slots, 7 across, 6 down
-    chipBeforeFall(320);
-    moveChipSideToSide()
+    doItAllAgain();
 
     function blueCanvas(x1, x2, y1, y2) {
         ctx.beginPath();
@@ -95,7 +94,7 @@ $(document).ready(function () {
             if (yCoordAndTimer < 100) {
                 top(x, yCoordAndTimer, 29);
             }
-            for (var k = 0; k < dropTo + 1; k++) { //change the 7 to the stopping point-1
+            for (var k = 0; k < dropTo + 1; k++) {
                 behindBlueDrop(x, k, yCoordAndTimer);
             }
         }, 2.5 * (yCoordAndTimer - 30));
@@ -103,10 +102,11 @@ $(document).ready(function () {
 
     function behindBlueDrop(x, checkAllSix, movingY) {
         if (Math.abs((36 + checkAllSix * 71) - movingY) < 59) {
+            $('#two').text(Math.abs((36 + checkAllSix * 71) - movingY) + " and 59");
+
             partial(x, movingY, 36 + checkAllSix * 71, 29);
         }
-       // $('#two').text('dropTo: ' + dropTo);
-        if (movingY == (dropTo * 71) + 35) { //this is temporary...if movingY has reached the bottom, change to variable that tracks final location.
+        if (movingY >= (dropTo * 71) + 35) {
             doItAllAgain();
         }
     }
@@ -144,10 +144,10 @@ $(document).ready(function () {
         ctx.closePath();
     }
 
-    function chipBeforeFall(x) {
+    function chipBeforeFall(xTop) {
         ctx.beginPath();
-        ctx.arc(x, 30, 29, 0, 2 * Math.PI);
-        if (color - 1) {
+        ctx.arc(xTop, 30, 29, 0, 2 * Math.PI);
+        if (!(color - 1)) {
             ctx.strokeStyle = "#f00";
             ctx.fillStyle = "#f00";
         } else {
@@ -157,12 +157,16 @@ $(document).ready(function () {
         ctx.fill();
         ctx.stroke();
         ctx.closePath();
+
+    }
+
+    function changeColor() {
+        color *= -1;
     }
 
     function doItAllAgain() {
         flag = 0;
-        color *= -1;
-        chipBeforeFall(320);
+        chipBeforeFall(250);//chip starts in the middle
         moveChipSideToSide();
     }
 
@@ -177,7 +181,7 @@ $(document).ready(function () {
     function startMovingChip() {
         var x = event.pageX;
         var y = event.pageY;
-        if (x > 291 && x < 349 && y > 0 && y < 59 && flag == 0) { //chip starts in the middle. if it is clicked, movement is triggered
+        if (x > 221 && x < 279 && y > 0 && y < 59 && flag == 0) { //check if click is on the chip in the middle. if it is clicked, movement is triggered
             c.addEventListener("mousemove", moveChipSideways);
         }
     }
@@ -186,28 +190,36 @@ $(document).ready(function () {
         c.removeEventListener("mousemove", moveChipSideways);
         c.removeEventListener("mousedown", startMovingChip);
         c.removeEventListener("mouseup", mouseUp);
+        changeColor();
+        clearTop(0, 500); //made sure there are no ghosts left up top.
+
         var x = event.pageX;
         flag = 1;
         var track = Math.round((x - 36) / 71); //track = which column to drop the chip into
         if (track < 0) {
             track = 0;
         }
-        for (var j = 1; j < 6; j++) { //keep track of the board array...update and check how far we are dropping
-            if (board[j][track] != 0 ) {
-                board[j - 1][track] = color;
-                dropTo = j;
-                j = 10;
-            } else if (j == 5) {
-                board[5][track] = color;
-                dropTo = 6;
+        if (board[0][track] == 0) { //only drop if the first slot is unoccupied
+            for (var j = 1; j < 6; j++) { //keep track of the board array...update and check how far we are dropping
+                if (board[j][track] != 0) {
+                    board[j - 1][track] = color;
+                    dropTo = j;
+                    j = 10;
+                } else if (j == 5) {
+                    board[5][track] = color;
+                    dropTo = 6;
+                }
             }
-        }
-        $('#two').text('board: ' + board);
-        $('#one').text('dropTo: ' + dropTo);
 
-        track = 36 + (track * 71);
-        for (var i = 30; i < (dropTo * 71) + 36; i++) { //(dropTo*71)+36
-            slowdrop(i, track);
+            $('#one').text(board[0] + '----' + board[1] + "----" + board[2] + "----" + board[3] + "----" + board[4] + "----" + board[5]);
+            // $('#one').text('color: ' + color);
+            track = 36 + (track * 71);
+            for (var i = 30; i < (dropTo * 71) + 36; i++) { //(dropTo*71)+36
+                slowdrop(i, track);
+            }
+        } else {
+            changeColor();
+            doItAllAgain();
         }
     }
 

@@ -1,17 +1,16 @@
 $(document).ready(function () {
-    var board = [ //[rows][columns]
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
+    var board = [
+        [0, 0, 0, 0, 0, 0, 0], 
+        [0, 0, 0, 0, 0, 0, 0], 
+        [0, 0, 0, 0, 0, 0, 0], 
+        [0, 0, 0, 0, 0, 0, 0], 
+        [0, 0, 0, 0, 0, 0, 0], 
         [0, 0, 0, 0, 0, 0, 0]
     ];
     var color = -1;
     var flag = 0;
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
-    var dropTo = 6;
     blueCanvas(0, 500, 71, 500);
     slots(0, 7, 6); //creates the white slots, 7 across, 6 down
     chipBeforeFall(320);
@@ -28,9 +27,9 @@ $(document).ready(function () {
         ctx.fill();
     }
 
-    function slots(columnStart, columnStop) { //columnStop is left in because the beginning of the board draw requires it 
-        for (var i = columnStart; i < columnStop; i++) { //for every drop, it is only running this loop once
-            for (var j = 0; j < dropTo; j++) {
+    function slots(columnStart, columnStop, rowStop) {//columnStop is left in because the beginning of the board draw requires it 
+        for (var i = columnStart; i < columnStop; i++) {//for every drop, it is only running this loop once
+            for (var j = 0; j < rowStop; j++) {
                 ctx.beginPath();
                 ctx.arc(36 + i * 71, 107 + j * 71, 29, 0, 2 * Math.PI);
                 ctx.strokeStyle = "#fff";
@@ -83,9 +82,21 @@ $(document).ready(function () {
 
     function slowdrop(yCoordAndTimer, x) {
         setTimeout(function () {
-            var colStart = (x - 36) / 71; //ok to access array with colStart...0 based
+            var colStart = (x - 36) / 71;
             var colStop = colStart + 1;
-            slots(colStart, colStop); //clears slots while dropping
+            var roStop;//change to stopping point and replace the grid array
+            for (var i = 0;i<8;i++){
+                if (board[i][colStart]!=0){
+                    roStop = i-1;
+                    i = i+ 8;
+                }
+                else roStop = 6;
+            
+            }
+            board[roStop][colStart]=1;
+            $('#two').text('board: ' + board);
+
+            slots(colStart, colStop, roStop); //clears slots while dropping
             if (yCoordAndTimer < 103) { //clears top while dropping
                 var clrTopStart = x - 36;
                 var clrTopStop = x + 36;
@@ -95,8 +106,8 @@ $(document).ready(function () {
             if (yCoordAndTimer < 100) {
                 top(x, yCoordAndTimer, 29);
             }
-            for (var k = 0; k < dropTo + 1; k++) { //change the 7 to the stopping point-1
-                behindBlueDrop(x, k, yCoordAndTimer);
+            for (var k = 0; k < roStop-1; k++) {//change the 7 to the stopping point-1.
+                behindBlueDrop(x, k, yCoordAndTimer, doItAllAgain);
             }
         }, 2.5 * (yCoordAndTimer - 30));
     }
@@ -105,8 +116,8 @@ $(document).ready(function () {
         if (Math.abs((36 + checkAllSix * 71) - movingY) < 59) {
             partial(x, movingY, 36 + checkAllSix * 71, 29);
         }
-       // $('#two').text('dropTo: ' + dropTo);
-        if (movingY == (dropTo * 71) + 35) { //this is temporary...if movingY has reached the bottom, change to variable that tracks final location.
+        if (movingY == 461) { //this is temporary...if movingY has reached the bottom, change to variable that tracks final location.
+
             doItAllAgain();
         }
     }
@@ -159,6 +170,7 @@ $(document).ready(function () {
         ctx.closePath();
     }
 
+
     function doItAllAgain() {
         flag = 0;
         color *= -1;
@@ -192,27 +204,14 @@ $(document).ready(function () {
         if (track < 0) {
             track = 0;
         }
-        for (var j = 1; j < 6; j++) { //keep track of the board array...update and check how far we are dropping
-            if (board[j][track] != 0 ) {
-                board[j - 1][track] = color;
-                dropTo = j;
-                j = 10;
-            } else if (j == 5) {
-                board[5][track] = color;
-                dropTo = 6;
-            }
-        }
-        $('#two').text('board: ' + board);
-        $('#one').text('dropTo: ' + dropTo);
-
         track = 36 + (track * 71);
-        for (var i = 30; i < (dropTo * 71) + 36; i++) { //(dropTo*71)+36
+        for (var i = 30; i < 462; i++) {
             slowdrop(i, track);
         }
     }
 
     function moveChipSideToSide() {
-        //flag = 0;
+        flag = 0;
         c.addEventListener("mousedown", startMovingChip);
         c.addEventListener("mouseup", mouseUp);
     }

@@ -165,9 +165,51 @@ $(document).ready(function () {
     }
 
     function doItAllAgain() {
-        flag = 0;
-        chipBeforeFall(250);//chip starts in the middle
-        moveChipSideToSide();
+        if (checkForWin()) {
+            $('#one').text("game over, "+color+" wins");
+        } else {
+            flag = 0;
+            chipBeforeFall(250); //chip starts in the middle
+            moveChipSideToSide();
+        }
+
+    }
+
+    function checkForWin() {
+        var gameOver = false;
+        for (var i = 0; i < 6; i++) {
+            for (var j = 0; j < 4; j++) {
+                if (board[i][j] == color && board[i][j + 1] == color && board[i][j + 2] == color && board[i][j + 3] == color) { //check for win horizontally
+                    gameOver = true;
+                }
+            }
+        }
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 7; j++) {
+                if (board[i][j] == color && board[i + 1][j] == color && board[i + 2][j] == color && board[i + 3][j] == color) { //check for win vertically
+                    gameOver = true;
+                }
+            }
+        }
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 4; j++) {
+                if (board[i][j] == color && board[i + 1][j + 1] == color && board[i + 2][j + 2] == color && board[i + 3][j + 3] == color) { //check for win 135 degrees diagonally
+                    gameOver = true;
+                }
+            }
+        }
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 4; j++) {
+                if (board[i][j + 3] == color && board[i + 1][j + 2] == color && board[i + 2][j + 1] == color && board[i + 3][j + 0] == color) { //check for win 45 degrees diagonally
+                    gameOver = true;
+                }
+            }
+        }
+        if (gameOver) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function moveChipSideways() {
@@ -211,7 +253,6 @@ $(document).ready(function () {
                 }
             }
 
-            $('#one').text(board[0] + '----' + board[1] + "----" + board[2] + "----" + board[3] + "----" + board[4] + "----" + board[5]);
             // $('#one').text('color: ' + color);
             track = 36 + (track * 71);
             for (var i = 30; i < (dropTo * 71) + 36; i++) { //(dropTo*71)+36

@@ -7,7 +7,8 @@ $(document).ready(function () {
         [0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0]
     ];
-    var color = -1;
+
+    var color = 1;
     var flag;
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
@@ -72,8 +73,8 @@ $(document).ready(function () {
             ctx.strokeStyle = "#f00";
             ctx.fillStyle = "#f00";
         } else {
-            ctx.strokeStyle = "#0f0";
-            ctx.fillStyle = "#0f0";
+            ctx.strokeStyle = "#e6e600";
+            ctx.fillStyle = "#e6e600";
         }
         ctx.fill();
         ctx.stroke();
@@ -102,8 +103,6 @@ $(document).ready(function () {
 
     function behindBlueDrop(x, checkAllSix, movingY) {
         if (Math.abs((36 + checkAllSix * 71) - movingY) < 59) {
-            $('#two').text(Math.abs((36 + checkAllSix * 71) - movingY) + " and 59");
-
             partial(x, movingY, 36 + checkAllSix * 71, 29);
         }
         if (movingY >= (dropTo * 71) + 35) {
@@ -119,8 +118,6 @@ $(document).ready(function () {
             return;
         }
         var startingAngle1 = Math.atan((yp - y1) / (xp - x));
-        $('#three').text('xp is: ' + xp);
-        $('#four').text('startingAngle1 is: ' + startingAngle1);
         var endingAngle1 = (Math.PI) - startingAngle1;
         var endingAngle2 = 0 - startingAngle1;
         var startingAngle2 = (Math.PI) - endingAngle2;
@@ -136,8 +133,8 @@ $(document).ready(function () {
             ctx.strokeStyle = "#f00";
             ctx.fillStyle = "#f00";
         } else {
-            ctx.strokeStyle = "#0f0";
-            ctx.fillStyle = "#0f0";
+            ctx.strokeStyle = "#e6e600";
+            ctx.fillStyle = "#e6e600";
         }
         ctx.fill();
         ctx.stroke();
@@ -151,13 +148,12 @@ $(document).ready(function () {
             ctx.strokeStyle = "#f00";
             ctx.fillStyle = "#f00";
         } else {
-            ctx.strokeStyle = "#0f0";
-            ctx.fillStyle = "#0f0";
+            ctx.strokeStyle = "#e6e600";
+            ctx.fillStyle = "#e6e600";
         }
         ctx.fill();
         ctx.stroke();
         ctx.closePath();
-
     }
 
     function changeColor() {
@@ -166,13 +162,37 @@ $(document).ready(function () {
 
     function doItAllAgain() {
         if (checkForWin()) {
-            $('#one').text("game over, "+color+" wins");
+            var winner;
+            if (color == 1) {
+                winner = "yellow";
+            } else
+                winner = "red";
+            $('#one').text("Game over, " + winner + " wins!");
+            doYouWantToPlayAgain();
+        } else if (catsGame()) {
+            $('#one').text("Cats game!");
+            doYouWantToPlayAgain();
+
         } else {
             flag = 0;
             chipBeforeFall(250); //chip starts in the middle
             moveChipSideToSide();
         }
+    }
 
+    function doYouWantToPlayAgain() {
+        $("#two").html('<button class=\"playAgain\">Play again?</button>');
+        $("#two").click(function () {
+            window.history.go(0);
+        })
+    }
+
+    function catsGame() {
+        if (board[0][0] && board[0][1] && board[0][2] & board[0][3] && board[0][4] && board[0][5] && board[0][6]) { //check to see if there is a chip in all of the slots of the top row
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function checkForWin() {
@@ -234,7 +254,6 @@ $(document).ready(function () {
         c.removeEventListener("mouseup", mouseUp);
         changeColor();
         clearTop(0, 500); //made sure there are no ghosts left up top.
-
         var x = event.pageX;
         flag = 1;
         var track = Math.round((x - 36) / 71); //track = which column to drop the chip into
@@ -270,5 +289,3 @@ $(document).ready(function () {
         c.addEventListener("mouseup", mouseUp);
     }
 })
-
-//changed document to "c"
